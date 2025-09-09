@@ -1,4 +1,4 @@
-# AI_Bootcamp
+# AI Bootcamp (AI Agents and Frameworks)
 
 This repository contains Python scripts and demos for working with Azure Autogen, and Semantic Kernel.
 
