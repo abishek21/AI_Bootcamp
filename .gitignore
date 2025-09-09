@@ -3,6 +3,6 @@
 
 # But not these files...
 !*.py
-
-# Allow .gitignore itself
 !.gitignore
+!requirements.txt
+!README.md

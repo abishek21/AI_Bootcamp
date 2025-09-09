@@ -4,22 +4,25 @@ import autogen
 from autogen import AssistantAgent, UserProxyAgent
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables from .env file for secure credential management
 load_dotenv()
 
+# Retrieve Azure OpenAI credentials and model info from environment variables
 subscription_key = os.getenv("AZURE_OPENAI_API_KEY")
 azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
 api_version = os.getenv("AZURE_OPENAI_API_VERSION")
 model = os.getenv("AZURE_OPENAI_MODEL")
 
+# Configuration dictionary for the LLM, used by autogen agents
 llm_config = {
-    "model": model,  # or your deployed Azure OpenAI model name
+    "model": model,  # Name of your deployed Azure OpenAI model
     "api_type": "azure",
     "api_key": subscription_key,
     "azure_endpoint": azure_endpoint,
     "api_version": api_version,
 }
 
+# Define tasks for the financial and writing assistants
 financial_tasks = [
     """What are the current stock prices of MSFT and how is the performance over the past month in terms of percentage change?"""
 ]
@@ -29,6 +32,7 @@ writing_tasks = [
     """Write a funny blog about Microsoft stock. After writing, output only the Python code (in a Python code block) to save the blog post as funny_msft_blog.txt"""
 ]
 
+# Create specialized assistant agents for different tasks
 financial_assistant = autogen.AssistantAgent(
     name="Financial_assistant",
     llm_config=llm_config,
@@ -48,18 +52,19 @@ writer = autogen.AssistantAgent(
         """,
 )
 
+# Create a user proxy agent that can execute code and interact with assistants
 user = autogen.UserProxyAgent(
     name="User",
-    human_input_mode="ALWAYS",
-    # is_termination_msg=lambda x: x.get("content", "") and x.get("content", "").rstrip().endswith("TERMINATE"),
-    # is_termination_msg=lambda x: x.get("content", "").strip().upper() == "EXIT",
+    human_input_mode="ALWAYS",  # Allows for human input during the workflow
+    # is_termination_msg can be customized to control when the conversation ends
     code_execution_config={
         "last_n_messages": 3,
         "work_dir": "tasks",
         "use_docker": False,
-    },  # Please set use_docker=True if docker is available to run the generated code. Using docker is safer than running the generated code directly.
+    },  # Set use_docker=True if you want to run code in a Docker container for safety
 )
 
+# Initiate parallel chats with the assistants for each task
 chat_results = user.initiate_chats(
     [
         {
