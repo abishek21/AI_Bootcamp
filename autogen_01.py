@@ -41,9 +41,21 @@ user_proxy = UserProxyAgent(
     },
     llm_config=llm_config
 )
+## Use Docker-based code execution for better isolation (uncomment if Docker is set up)
+# with autogen.coding.DockerCommandLineCodeExecutor(work_dir="coding") as code_executor:
+#     assistant = AssistantAgent("assistant", llm_config=llm_config)
+#     user_proxy = UserProxyAgent(
+#         "user_proxy", code_execution_config={"executor": code_executor}
+#     )
+
+#     # Start the chat
+#     user_proxy.initiate_chat(
+#         assistant,
+#         message="Plot a chart of MSFT stock price change YTD.",
+#     )
 
 # Start the chat between the user proxy and the assistant
 user_proxy.initiate_chat(
     assistant,
-    message="Plot a chart of MSFT stock price change YTD.",  # Initial user instruction to the assistant
+    message="Plot a chart of MSFT stock price change YTD and save it as a PNG file.",
 )
